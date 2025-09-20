@@ -15,10 +15,10 @@ jobs:
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: "http://testphp.vulnweb.com"   # alvo público p/ demonstração
-          cmd_options: "-a -r report.html"       # -a = modo agressivo; -r = salva HTML
+          target: "http://testphp.vulnweb.com"   # site de teste vulnerável
+          cmd_options: "-a -r report.html"
 
-      - name: Upload report artifact
+      - name: Upload ZAP Report
         uses: actions/upload-artifact@v3
         with:
           name: zap-report
