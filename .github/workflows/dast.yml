@@ -1,0 +1,24 @@
+name: DAST - OWASP ZAP
+
+on:
+  workflow_dispatch:   # pode rodar manualmente
+  push:
+    branches: [ "main" ]
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Iniciar aplicação (docker-compose)
+        run: docker-compose up -d
+        # ou: python src/app.py &
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          target: "http://localhost:8000"
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"
