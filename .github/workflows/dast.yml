@@ -18,12 +18,12 @@ jobs:
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: "http://testphp.vulnweb.com"   # alvo
-          cmd_options: "-a -r zap-report.html"   # gera zap-report.html
+          target: "http://testphp.vulnweb.com"   # site vulnerável de teste
+          cmd_options: "-a -r zap-report.html"   # gera o relatório com esse nome
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: zap-report.html
+          path: zap-report.html   # mesmo nome gerado acima
           retention-days: 7
