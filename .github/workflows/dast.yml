@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read   # permissões mínimas para as actions
+  contents: read       # permissões mínimas para as actions
 
 jobs:
   zap_scan:
@@ -19,13 +19,11 @@ jobs:
         uses: zaproxy/action-baseline@v0.9.0
         with:
           target: "http://testphp.vulnweb.com"   # site de teste vulnerável
-          cmd_options: "-a -r report.html"       # gera HTML do relatório
+          cmd_options: "-t 5 -a -r zap-report.html"  # gera HTML do relatório
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: report.html
+          path: zap-report.html
           retention-days: 7
-          
-
