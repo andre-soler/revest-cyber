@@ -1,7 +1,7 @@
 name: DAST - OWASP ZAP
 
 on:
-  workflow_dispatch:   # permite rodar manualmente
+  workflow_dispatch:
   push:
     branches: [ "main" ]
 
@@ -18,8 +18,8 @@ jobs:
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: "http://testphp.vulnweb.com"   # site alvo para teste
-          cmd_options: "-t -r zap-report.html"   # força geração de relatório HTML
+          target: "http://testphp.vulnweb.com"   # alvo
+          cmd_options: "-a -r zap-report.html"   # gera zap-report.html
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
