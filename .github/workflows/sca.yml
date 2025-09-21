@@ -1,0 +1,51 @@
+name: SCA - Dependency Review & pip-audit
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # Roda em PRs — compara dependências (não gera arquivo, mas falha PR se achar issues graves)
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review (PR diff)
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high   # opcional: falha se achar HIGH+
+
+  # Roda em push E PR — gera arquivo JSON baixável com CVEs do requirements.txt
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install pip-audit
+        run: python -m pip install --upgrade pip pip-audit
+
+      - name: Run pip-audit (JSON)
+        run: pip-audit -r requirements.txt -f json > sca-report.json || true
+
+      - name: Upload SCA report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sca-report
+          path: sca-report.json
+          retention-days: 7

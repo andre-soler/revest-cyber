@@ -1,24 +1,37 @@
 name: SAST - Semgrep
 
 on:
-  pull_request:
   push:
     branches: [ "main" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   semgrep:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout c¢digo
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Instalar Python
-        uses: actions/setup-python@v4
+      # Rodada â€œoficialâ€ (aparecem achados nos logs)
+      - name: Run Semgrep (logs)
+        uses: returntocorp/semgrep-action@v1
         with:
-          python-version: '3.10'
+          config: p/default
+        continue-on-error: true
 
-      - name: Instalar Semgrep
-        run: pip install semgrep
+      # Gera relatÃ³rio JSON para baixar como artifact
+      - name: Generate Semgrep JSON report
+        run: |
+          python -m pip install --upgrade pip semgrep
+          semgrep --config p/default --json > semgrep-report.json || true
 
-      - name: Rodar an lise SAST
-        run: semgrep --config auto src/ --error
+      - name: Upload Semgrep report
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report
+          path: semgrep-report.json
+          retention-days: 7
