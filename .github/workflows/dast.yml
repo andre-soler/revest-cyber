@@ -1,13 +1,13 @@
 name: DAST - OWASP ZAP
 
 on:
-  workflow_dispatch:        # rodar manualmente
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
-  actions: write            # permite à action publicar o artifact
+  actions: write
 
 jobs:
   zap_scan:
@@ -17,15 +17,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.10.0   # versão mais nova
+        uses: zaproxy/action-baseline@v0.10.0
         with:
-          target: "http://testphp.vulnweb.com"
-          cmd_options: "-a"                      # gera relatório padrão
-          artifact_name: "zap-report"            # <-- a própria action publica o artefato
-          # Você pode opcionalmente usar:
-          # issue_title: "ZAP Baseline Scan Report"
+          target: "http://testphp.vulnweb.com"   # alvo de teste
+          cmd_options: "-a -r zap-report.html"   # gera o relatório HTML
+          artifact_name: "zap-report"            # faz upload automático como artifact
 
-      # Passo opcional só para debug (lista arquivos do workspace)
-      - name: Debug – listar arquivos
-        if: always()
-        run: ls -lah
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: zap-report.html
+          retention-days: 7
