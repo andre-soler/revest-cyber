@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read       # permissões mínimas para as actions
+  contents: read
 
 jobs:
   zap_scan:
@@ -18,8 +18,8 @@ jobs:
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: "http://testphp.vulnweb.com"   # site de teste vulnerável
-          cmd_options: "-t 5 -a -r zap-report.html"  # gera HTML do relatório
+          target: "http://testphp.vulnweb.com"   # site alvo para teste
+          cmd_options: "-t -r zap-report.html"   # força geração de relatório HTML
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
